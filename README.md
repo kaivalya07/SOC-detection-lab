@@ -7,7 +7,7 @@ Every rule here was tested the same way: run the attack, find it in Splunk, writ
 query, then check what else that query catches and narrow it. The before and after
 numbers are in each writeup.
 
-![coverage](coverage.svg)
+![coverage](coverage/coverage.svg)
 
 ## Setup
 

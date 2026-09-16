@@ -1,0 +1,5 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  (Image="*\\systeminfo.exe" OR Image="*\\hostname.exe"
+   OR (Image="*\\wmic.exe" AND CommandLine="*os get*"))
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

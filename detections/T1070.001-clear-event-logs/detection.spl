@@ -1,0 +1,6 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  ((Image="*\\wevtutil.exe" AND (CommandLine="*cl *" OR CommandLine="*clear-log*"))
+   OR CommandLine="*Clear-EventLog*"
+   OR CommandLine="*Remove-EventLog*")
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

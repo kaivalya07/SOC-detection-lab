@@ -18,7 +18,7 @@ one extra account in a user list.
 T1136.001 has no Windows tests in the atomics library - it returned "Found 0 atomic
 tests applicable to windows platform". So I ran it myself:
 
-    net user svc_backup Passw0rd123! /add
+    net user svc_backup <password> /add
     net localgroup administrators svc_backup /add
 
 I named it svc_backup on purpose. Attackers pick names that look like service

@@ -1,0 +1,6 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  ((Image="*\\schtasks.exe" AND CommandLine="*/create*")
+   OR CommandLine="*Register-ScheduledTask*"
+   OR CommandLine="*New-ScheduledTask*")
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

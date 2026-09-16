@@ -1,0 +1,6 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  (Image="*\\ipconfig.exe" OR Image="*\\arp.exe"
+   OR Image="*\\route.exe" OR Image="*\\nbtstat.exe"
+   OR (Image="*\\netsh.exe" AND CommandLine="*show*"))
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

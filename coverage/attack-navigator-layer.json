@@ -1,0 +1,141 @@
+{
+    "name": "SOC Detection Lab - Coverage",
+    "versions": {
+        "attack": "16",
+        "navigator": "5.1.0",
+        "layer": "4.5"
+    },
+    "domain": "enterprise-attack",
+    "description": "Techniques with detection rules written and tested in this lab. Score 100 = high confidence, low false positive rate. Score 50 = detection written but not reliable as a standalone alert, used as input to a correlated rule instead.",
+    "filters": {
+        "platforms": [
+            "Windows"
+        ]
+    },
+    "sorting": 0,
+    "layout": {
+        "layout": "side",
+        "aggregateFunction": "average",
+        "showID": true,
+        "showName": true,
+        "showAggregateScores": false,
+        "countUnscored": false,
+        "expandedSubtechniques": "none"
+    },
+    "hideDisabled": false,
+    "techniques": [
+        {
+            "techniqueID": "T1059.001",
+            "tactic": "execution",
+            "score": 100,
+            "color": "",
+            "comment": "Detects download cradles, encoded commands, hidden windows and script file loading. Tuned from 4 hits to 2 (both from the test) by removing bare Import-Module and requiring http alongside IEX/Invoke-Expression.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1070.001",
+            "tactic": "defense-evasion",
+            "score": 100,
+            "color": "",
+            "comment": "Detected two ways: wevtutil/Clear-EventLog process creation, and System Event ID 104 which Windows writes when a log is cleared. Zero false positives - reading logs does not match, only clearing them.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1547.001",
+            "tactic": "persistence",
+            "score": 100,
+            "color": "",
+            "comment": "Sysmon Event ID 13, registry value writes to Run and RunOnce. Tuned from 7 hits to 1. False positives were Microsoft Edge autolaunch and rundll32 GrpConv - excluded on full path plus value name plus account, not process name.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1053.005",
+            "tactic": "persistence",
+            "score": 100,
+            "color": "",
+            "comment": "Covers both schtasks.exe /create and the PowerShell scheduled task cmdlets. Reading tasks does not match. Caught a task created with /ru system, which is privilege escalation as well as persistence.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1136.001",
+            "tactic": "persistence",
+            "score": 100,
+            "color": "",
+            "comment": "Sysmon process creation plus Security Event ID 4720 and 4732. Security events were missing until the User Account Management audit subcategory was enabled - the detection gap was telemetry, not logic.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1082",
+            "tactic": "discovery",
+            "score": 50,
+            "color": "",
+            "comment": "Written but not viable as a standalone alert - 21 hits in a near-idle lab, and systeminfo run by an attacker is identical to systeminfo run by an admin. Used as an input to the discovery burst correlation instead.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1033",
+            "tactic": "discovery",
+            "score": 50,
+            "color": "",
+            "comment": "Same limitation as T1082 - 19 hits, no field distinguishes malicious from routine use of whoami. Feeds the discovery burst correlation.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1016",
+            "tactic": "discovery",
+            "score": 50,
+            "color": "",
+            "comment": "5 hits. The timing was the useful finding - four network commands from one cmd.exe inside 240ms is scripted, not typed. That observation led to the discovery burst rule.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        }
+    ],
+    "gradient": {
+        "colors": [
+            "#ffe766",
+            "#8ec843"
+        ],
+        "minValue": 0,
+        "maxValue": 100
+    },
+    "legendItems": [
+        {
+            "label": "High confidence - alerting",
+            "color": "#8ec843"
+        },
+        {
+            "label": "Low confidence - correlation input only",
+            "color": "#ffe766"
+        }
+    ],
+    "metadata": [],
+    "links": [],
+    "showTacticRowBackground": true,
+    "tacticRowBackground": "#dddddd",
+    "selectTechniquesAcrossTactics": true,
+    "selectSubtechniquesWithParent": false,
+    "selectVisibleTechniques": false
+}

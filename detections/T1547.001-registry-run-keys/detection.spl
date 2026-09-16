@@ -1,0 +1,9 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=13
+  (TargetObject="*\\CurrentVersion\\Run\\*" OR TargetObject="*\\CurrentVersion\\RunOnce\\*")
+  NOT (Image="C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+       AND TargetObject="*MicrosoftEdgeAutoLaunch*")
+  NOT (Image="C:\\WINDOWS\\system32\\rundll32.exe"
+       AND TargetObject="*\\RunOnce\\GrpConv"
+       AND User="NT AUTHORITY\\SYSTEM")
+| table _time, Computer, User, Image, TargetObject, Details
+| sort -_time

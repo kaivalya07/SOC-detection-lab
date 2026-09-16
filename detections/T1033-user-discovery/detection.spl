@@ -1,0 +1,6 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  (Image="*\\whoami.exe"
+   OR (Image="*\\net.exe" AND CommandLine="*user *" AND NOT CommandLine="*/add*")
+   OR (Image="*\\net1.exe" AND CommandLine="*user *" AND NOT CommandLine="*/add*"))
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

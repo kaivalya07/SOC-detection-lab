@@ -1,0 +1,9 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  (Image="*\\whoami.exe" OR Image="*\\systeminfo.exe" OR Image="*\\ipconfig.exe"
+   OR Image="*\\hostname.exe" OR Image="*\\net.exe" OR Image="*\\net1.exe"
+   OR Image="*\\arp.exe" OR Image="*\\nbtstat.exe" OR Image="*\\netsh.exe"
+   OR Image="*\\tasklist.exe" OR Image="*\\route.exe" OR Image="*\\nltest.exe")
+| bin _time span=5m
+| stats dc(Image) as unique_commands, values(Image) as commands by _time, ParentImage
+| where unique_commands >= 4
+| sort -_time

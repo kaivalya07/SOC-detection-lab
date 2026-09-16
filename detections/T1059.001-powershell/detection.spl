@@ -1,0 +1,9 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  (Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
+  (CommandLine="*-enc*" OR CommandLine="*-EncodedCommand*"
+   OR CommandLine="*DownloadString*" OR CommandLine="*-w hidden*"
+   OR CommandLine="*.ps1*"
+   OR (CommandLine="*IEX*" AND CommandLine="*http*")
+   OR (CommandLine="*Invoke-Expression*" AND CommandLine="*http*"))
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

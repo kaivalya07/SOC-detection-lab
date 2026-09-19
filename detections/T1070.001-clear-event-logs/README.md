@@ -1,6 +1,7 @@
 # T1070.001 - Clear Windows Event Logs
 
-Tactic: Defense Evasion
+Tactic: Defense Impairment (was Defense Evasion before ATT&CK v19)
+ATT&CK ID: T1685.005 (was T1070.001 before v19)
 Data source: Sysmon Event ID 1, plus Windows System log Event ID 104
 Tested with: ran the technique manually
 

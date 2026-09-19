@@ -6,7 +6,7 @@
         "layer": "4.5"
     },
     "domain": "enterprise-attack",
-    "description": "Techniques with detection rules written and tested in this lab. Score 100 = high confidence, low false positive rate, used as a live alert. Score 50 = rule written and documented but not reliable standalone, used as an input to a correlated detection instead.",
+    "description": "18 detection rules across 6 tactics, each validated by executing the technique and tuned against a real baseline. Score 100 = high confidence, live alert. Score 50 = documented but not reliable standalone, used as input to a correlated detection.",
     "filters": {
         "platforms": [
             "Windows"
@@ -28,17 +28,77 @@
             "techniqueID": "T1059.001",
             "score": 100,
             "color": "",
-            "comment": "Detects download cradles, encoded commands, hidden windows and script file loading. Tuned from 4 hits to 2, both from the test, by removing bare Import-Module and requiring http alongside IEX and Invoke-Expression.",
+            "comment": "PowerShell download cradles, encoded commands, hidden windows and script loading. Tuned 4 hits to 2 by removing bare Import-Module and requiring http alongside IEX.",
             "enabled": true,
             "metadata": [],
             "links": [],
             "showSubtechniques": false
         },
         {
-            "techniqueID": "T1070.001",
+            "techniqueID": "T1059.003",
             "score": 100,
             "color": "",
-            "comment": "Detected two ways: wevtutil and Clear-EventLog process creation, plus System Event ID 104 which Windows writes when a log is cleared. Zero false positives. Reading logs does not match, only clearing them.",
+            "comment": "cmd.exe running hidden PowerShell, temp-path binaries or service creation. Tuned 154 hits to 5 - 149 false positives, mostly one MSI installer spawning 14 cmd.exe children.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1569.002",
+            "score": 100,
+            "color": "",
+            "comment": "Service creation where binPath is a command rather than an executable. sc.exe create, New-Service and psexec all covered.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1685.005",
+            "score": 100,
+            "color": "",
+            "comment": "Windows event log clearing via wevtutil or Clear-EventLog, cross-checked against System Event ID 104. Was T1070.001 before ATT&CK v19 renumbered it.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1218.011",
+            "score": 100,
+            "color": "",
+            "comment": "rundll32 fetching remote script via javascript: and RunHTMLApplication. Tuned 11 hits to 1 - the .dll, condition matched all legitimate rundll32 usage and was removed.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1218.010",
+            "score": 100,
+            "color": "",
+            "comment": "Squiblydoo - regsvr32 with scrobj.dll and /i: to execute a remote scriptlet past application allowlisting.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1197",
+            "score": 100,
+            "color": "",
+            "comment": "bitsadmin downloading a file. BITS traffic looks like Windows Update and survives logoff, which is why attackers use it.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1027",
+            "score": 100,
+            "color": "",
+            "comment": "Base64 encoded PowerShell command lines. Only catches command-line encoding - in-script obfuscation would need Event 4104.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -48,7 +108,7 @@
             "techniqueID": "T1547.001",
             "score": 100,
             "color": "",
-            "comment": "Sysmon Event ID 13, registry writes to Run and RunOnce. Tuned from 7 hits to 1. False positives were Microsoft Edge autolaunch and rundll32 GrpConv, excluded on full path plus value name plus account rather than process name.",
+            "comment": "Registry Run and RunOnce writes. Tuned 7 hits to 1. Excluded Edge autolaunch and rundll32 GrpConv by full path plus value name plus account, never by process name.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -58,7 +118,7 @@
             "techniqueID": "T1053.005",
             "score": 100,
             "color": "",
-            "comment": "Covers schtasks.exe /create and the PowerShell scheduled task cmdlets. Reading tasks does not match. Caught a task created with /ru system, which is privilege escalation as well as persistence.",
+            "comment": "Scheduled task creation via schtasks /create or the PowerShell cmdlets. Caught a task created with /ru system - privilege escalation as well as persistence.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -68,7 +128,17 @@
             "techniqueID": "T1136.001",
             "score": 100,
             "color": "",
-            "comment": "Sysmon process creation plus Security Event ID 4720 and 4732. The Security events were missing until the User Account Management audit subcategory was enabled. The detection gap was telemetry, not query logic.",
+            "comment": "Local account creation, Sysmon plus Security 4720 and 4732. Security events were missing until the User Account Management audit subcategory was enabled.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1543.003",
+            "score": 100,
+            "color": "",
+            "comment": "Service registry ImagePath pointing at cmd.exe or hidden PowerShell rather than an executable. Catches service persistence created through the API, where no sc.exe process exists.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -78,7 +148,7 @@
             "techniqueID": "T1082",
             "score": 50,
             "color": "",
-            "comment": "Written but not viable as a standalone alert. 21 hits in a near-idle lab, and systeminfo run by an attacker is identical to systeminfo run by an admin. Used as an input to the discovery burst correlation.",
+            "comment": "Written but not viable standalone - 21 hits in a near-idle lab. systeminfo run by an attacker is identical to systeminfo run by an admin. Feeds the discovery burst correlation.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -88,7 +158,7 @@
             "techniqueID": "T1033",
             "score": 50,
             "color": "",
-            "comment": "Same limitation as T1082. 19 hits, and no field distinguishes malicious from routine use of whoami. Feeds the discovery burst correlation.",
+            "comment": "19 hits, no field distinguishes malicious from routine whoami. Correlation input only.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -98,7 +168,27 @@
             "techniqueID": "T1016",
             "score": 50,
             "color": "",
-            "comment": "5 hits. The timing was the useful finding: four network commands from one cmd.exe inside 240ms is scripted, not typed. That observation led to the discovery burst rule.",
+            "comment": "5 hits. Four network commands from one cmd.exe inside 240ms is scripted, not typed - that timing observation produced the burst rule.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1003.002",
+            "score": 100,
+            "color": "",
+            "comment": "SAM, SYSTEM and SECURITY hive dumps via reg save. No Image filter, so it catches the chained cmd.exe form as well as individual reg.exe calls.",
+            "enabled": true,
+            "metadata": [],
+            "links": [],
+            "showSubtechniques": false
+        },
+        {
+            "techniqueID": "T1105",
+            "score": 100,
+            "color": "",
+            "comment": "certutil -urlcache and similar signed-binary downloaders pulling files onto the host post-compromise.",
             "enabled": true,
             "metadata": [],
             "links": [],
@@ -119,7 +209,7 @@
             "color": "#8ec843"
         },
         {
-            "label": "Low confidence - correlation input only",
+            "label": "Correlation input only",
             "color": "#ffe766"
         }
     ],

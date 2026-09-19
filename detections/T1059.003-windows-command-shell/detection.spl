@@ -1,0 +1,9 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  Image="*\\cmd.exe"
+  (CommandLine="*/c *" OR CommandLine="*/k *")
+  (CommandLine="*-w hidden*" OR CommandLine="*-nop*" OR CommandLine="*-enc*"
+   OR CommandLine="*\\temp\\*" OR CommandLine="*%temp%*"
+   OR (CommandLine="*sc.exe*" AND CommandLine="*create*"))
+  NOT ParentImage="C:\\WINDOWS\\system32\\msiexec.exe"
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

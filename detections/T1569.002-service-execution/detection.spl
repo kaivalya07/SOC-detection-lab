@@ -1,0 +1,6 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  ((Image="*\\sc.exe" AND CommandLine="*create*")
+   OR CommandLine="*New-Service*"
+   OR (Image="*\\psexec*"))
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

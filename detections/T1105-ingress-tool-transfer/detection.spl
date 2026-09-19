@@ -1,0 +1,8 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  ((Image="*\\certutil.exe" AND CommandLine="*urlcache*")
+   OR (Image="*\\certutil.exe" AND CommandLine="*http*")
+   OR (Image="*\\curl.exe" AND CommandLine="*http*")
+   OR CommandLine="*Invoke-WebRequest*"
+   OR CommandLine="*DownloadFile*")
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

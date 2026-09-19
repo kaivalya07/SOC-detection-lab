@@ -1,0 +1,5 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  (Image="*\\bitsadmin.exe"
+   OR CommandLine="*Start-BitsTransfer*")
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

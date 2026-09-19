@@ -1,0 +1,9 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  Image="*\\rundll32.exe"
+  (CommandLine="*javascript:*" OR CommandLine="*GetObject*"
+   OR CommandLine="*mshtml*" OR CommandLine="*RunHTMLApplication*"
+   OR CommandLine="*http*"
+   OR CommandLine="*\\temp\\*" OR CommandLine="*%temp%*")
+  NOT ParentImage="C:\\Windows\\System32\\svchost.exe"
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time

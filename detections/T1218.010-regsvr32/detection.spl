@@ -1,0 +1,7 @@
+index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+  Image="*\\regsvr32.exe"
+  (CommandLine="*/i:*" OR CommandLine="*scrobj.dll*"
+   OR CommandLine="*http*" OR CommandLine="*.sct*"
+   OR CommandLine="*\\temp\\*" OR CommandLine="*%temp%*")
+| table _time, Computer, User, ParentImage, Image, CommandLine
+| sort -_time
